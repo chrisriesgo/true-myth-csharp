@@ -70,12 +70,15 @@ namespace TrueMyth
 
         // Ensure a Nothing<string> and a Nothing<int> are both still considered a Nothing
         public bool Equals(IMaybeVariant other)
-            => Variant == other.Variant;
+            => EqualsImpl(other);
 
         public override bool Equals(object obj)
-            => obj is IMaybeVariant mv && Variant == mv.Variant;
+            => obj is IMaybeVariant mv && EqualsImpl(mv);
 
         public override int GetHashCode()
             => 0;
+            
+        bool EqualsImpl(IMaybeVariant other)
+        	=> Variant == other.Variant;
     }
 }

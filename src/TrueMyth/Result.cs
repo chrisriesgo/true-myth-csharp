@@ -71,7 +71,10 @@ namespace TrueMyth
 
         public bool Equals(IResult<TValue, TError> other)
             => other.IsOk() && UnsafelyUnwrap().Equals(other.UnsafelyUnwrap());
-    }
+
+		public override bool Equals(object obj)
+			=> obj is IResult<TValue, TError> other && other.IsOk() && UnsafelyUnwrap().Equals(other.UnsafelyUnwrap());
+	}
 
     public class Err<TValue, TError> : IResult<TValue, TError>, IEquatable<IResult<TValue, TError>>
     {
@@ -98,11 +101,17 @@ namespace TrueMyth
             => Result.SelectErr(selector, this);
 
         public TValue UnsafelyUnwrap()
-            => throw new Exception("Tried to `UnsafelyUnwrapErr` with an `Error``");
+            => throw new Exception("Tried to `UnsafelyUnwrapErr` with an `Error`");
 
         public TError UnsafelyUnwrapErr() => _error;
 
         public bool Equals(IResult<TValue, TError> other)
-            => other.IsErr() && UnsafelyUnwrapErr().Equals(other.UnsafelyUnwrapErr());
+            => EqualsImpl(other);
+
+		public override bool Equals(object obj)
+			=> obj is IResult<TValue, TError> other && EqualsImpl(other);
+			
+		bool EqualsImpl(IResult<TValue, TError> other)
+			=> other.IsErr() && UnsafelyUnwrapErr().Equals(other.UnsafelyUnwrapErr());
     }
 }

@@ -77,7 +77,13 @@ namespace TrueMyth
         public TMatched Match<TMatched>(Matcher<TValue, TMatched> matcher)
             => matcher.Just(_value);
 
-        public bool Equals(IMaybe<TValue> comparison)
-            => Maybe.IsJust(comparison) && _value.Equals(comparison.UnsafelyUnwrap());
-    }
+		public bool Equals(IMaybe<TValue> comparison)
+			=> EqualsImpl(comparison);
+
+		public override bool Equals(object obj)
+			=> obj is IMaybe<TValue> comparison && EqualsImpl(comparison);
+			
+		bool EqualsImpl(IMaybe<TValue> comparison)
+			=> Maybe.IsJust(comparison) && _value.Equals(comparison.UnsafelyUnwrap());
+	}
 }
